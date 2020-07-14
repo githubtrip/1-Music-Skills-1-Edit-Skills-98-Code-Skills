@@ -84,10 +84,10 @@ def reshape(lst, shape):
 
 if __name__ == "__main__":
     print("[o] Reading Video")
-    video = VideoFileClip("../inputvideo.mp4")
+    video = VideoFileClip("../video.mp4")
     video_notes = extract_notes(video)
     print("[o] Reading the Musical Notes")
-    miti = PrettyMIDI('../inputmidi.mid')
+    miti = PrettyMIDI('../*.mid')
 
     print("[o] Synchronizing with music and creating tracks")
     layers = get_notes_timed(video_notes, miti)
