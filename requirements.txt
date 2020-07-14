@@ -1,0 +1,3 @@
+librosa
+numpy==1.17.0
+pretty_midi
