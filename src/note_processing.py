@@ -41,19 +41,19 @@ def extract_subclips(video):
     temp_filename = 'temp'
 
     audio = video.audio
-    print("[o] Abrindo audio")
+    print("[o] Opening audio")
     audio.write_audiofile(f'{temp_filename}.wav')
     fps, soundarray_stereo = wavfile.read(f'{temp_filename}.wav')
     remove(f'{temp_filename}.wav')
     soundarray_mono = soundarray_stereo.sum(axis=1) / 2
     # time = np.linspace(0, len(soundarray_mono) / fps, num=len(soundarray_mono))
 
-    print("[o] Aplicando o fft")
+    print("[o] Applying the fft")
     sample, time_seg, zxx = stft(soundarray_mono, fs=fps)
     zxx = np.abs(zxx)
     sound_amplitude = np.dstack((zxx.sum(axis=0), time_seg))[0]
 
-    print("[o] Descobrindo as notas")
+    print("[o] Discovering the notes")
     sound_splited = splitter(
         sound_amplitude, sound_amplitude[:, 0] > filter_value)
     limits = get_limits([elm[:, 1] for elm in sound_splited])
@@ -72,7 +72,7 @@ def extract_subclips(video):
 def extract_notes(video):
     sub_videos = list(extract_subclips(video))[1:]
     dic = {}
-    print("[o] Cortando e numerando as notas")
+    print("[o] cutting & counting notes")
     for index, sub_video in enumerate(sub_videos):
         note_number = 40 + index
         txtClip = TextClip(note_name(note_number), color='white', font="Verdana", kerning=5, fontsize=100)
