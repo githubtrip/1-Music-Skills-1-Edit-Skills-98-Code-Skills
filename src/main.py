@@ -87,7 +87,7 @@ if __name__ == "__main__":
     video = VideoFileClip("../video.mp4")
     video_notes = extract_notes(video)
     print("[o] Reading the Musical Notes")
-    miti = PrettyMIDI('../*.mid')
+    miti = PrettyMIDI('../pirata.mid')
 
     print("[o] Synchronizing with music and creating tracks")
     layers = get_notes_timed(video_notes, miti)
