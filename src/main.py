@@ -24,7 +24,7 @@ def get_notes_timed(video_notes: dict, miti):
     print("video_notes_limits:", video_notes_limits)
 
     if music_limits[1] - music_limits[0] > video_notes_limits[1] - video_notes_limits[0]:
-        print("[x] Sem notas suficiente, notas serão cortadas")
+        print("[x] Without enough notes, notes will be cut off")
         video_notes_range = video_notes_limits[1] - video_notes_limits[0]
         notes_count = np.dstack(
             np.unique([note.pitch for note in music], return_counts=True))[0]
@@ -33,17 +33,17 @@ def get_notes_timed(video_notes: dict, miti):
             if notes_count[i: i + video_notes_range, 1].sum() > notes_count[max_start: max_start + video_notes_range, 1].sum():
                 max_start = i
         print(
-            f"[o] Maior numero de notas na faixa {max_start} - {max_start + video_notes_range}")
+            f"[o] Highest number of notes in the range {max_start} - {max_start + video_notes_range}")
         new_botton_music_limit = notes_count[:, 0][max_start]
         up_pich_in = video_notes_limits[0] - new_botton_music_limit
-        print("[o] Deslocando musica em ", up_pich_in)
+        print("[o] Shifting music on ", up_pich_in)
         for note in music:
             note.pitch += up_pich_in
-        print("[o] Removendo notas abaixo de ", video_notes_limits[0])
+        print("[o] Removing notes below ", video_notes_limits[0])
         len_music = len(music)
         music = [note for note in music if note.pitch in video_notes]
-        print(f"[o] {len_music - len(music)} notas perdidas")
-    print("[o] Projetando espaçamento")
+        print(f"[o] {len_music - len(music)} lost notes")
+    print("[o] Designing spacing")
     last_tick = miti.time_to_tick(miti.get_end_time())
     qtd_note = np.zeros(last_tick, dtype=np.int8)
     for note in music:
@@ -51,7 +51,7 @@ def get_notes_timed(video_notes: dict, miti):
             note.start): miti.time_to_tick(note.end)] += 1
 
     qtd_max_video = np.max(qtd_note)
-    print(f"[o] separando em {qtd_max_video} layers")
+    print(f"[o] separating in {qtd_max_video} layers")
 
     layers = [[] for i in range(qtd_max_video)]
 
@@ -83,13 +83,13 @@ def reshape(lst, shape):
 
 
 if __name__ == "__main__":
-    print("[o] Lendo Video")
-    video = VideoFileClip("../video.mp4")
+    print("[o] Reading Video")
+    video = VideoFileClip("../inputvideo.mp4")
     video_notes = extract_notes(video)
-    print("[o] Lendo as Notas Musicais")
-    miti = PrettyMIDI('../pirata.mid')
+    print("[o] Reading the Musical Notes")
+    miti = PrettyMIDI('../inputmidi.mid')
 
-    print("[o] Sincronizando com a musica e crindo faixas")
+    print("[o] Synchronizing with music and creating tracks")
     layers = get_notes_timed(video_notes, miti)
 
     for i in range(len(layers)):
@@ -109,8 +109,8 @@ if __name__ == "__main__":
             else:
                 final_layers[i][j] = video.subclip(0, 0.01)
     
-    print("[o] Concatentando final")
+    print("[o] Concatenate final")
     video = clips_array(final_layers)
 
-    print("[o] Rendenizando")
-    video.write_videofile('../pirata.mp4', threads=4)
+    print("[o] rendering")
+    video.write_videofile('../finaloutput.mp4', threads=4)
